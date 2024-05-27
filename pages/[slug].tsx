@@ -5,6 +5,19 @@ import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { executeQuery } from "@/lib/fetch-contents";
 import Link from "next/link";
 
+type CurrentPost = {
+  slug: string;
+  title: string;
+  content: {
+    value: string;
+  };
+  _firstPublishedAt: string;
+  author: {
+    id: string;
+    name: string;
+  }
+}
+
 const CURRENT_POST_QUERY = `
 query CurrentPost($slug: String) {
   currentPost: post(filter: { slug: { eq: $slug }}) {
@@ -21,6 +34,14 @@ query CurrentPost($slug: String) {
   }
 }
 `;
+
+type PreviousAndNextPost = {
+  slug: string;
+  title: string;
+  _firstPublishedAt: string;
+  _status: string;
+}
+
 
 const PREVIOUS_AND_NEXT_POSTS_QUERY = `
 query PreviousAndNextPosts($firstPublishedAt: DateTime, $slug: String) {
@@ -48,8 +69,8 @@ query PreviousAndNextPosts($firstPublishedAt: DateTime, $slug: String) {
 }
 `;
 
-export const getServerSideProps = (async ({ res, params }) => {
-  const { slug } = params;
+export const getServerSideProps: GetServerSideProps<{ currentPost: CurrentPost, previousPost: PreviousAndNextPost, nextPost: PreviousAndNextPost }, { slug: string }> = (async ({ res, params }) => {
+  const { slug } = params!;
 
   const { data: currentPostData, tags: currentPostTags } = await executeQuery(
     CURRENT_POST_QUERY,
@@ -76,7 +97,7 @@ export const getServerSideProps = (async ({ res, params }) => {
   return {
     props: { currentPost, previousPost, nextPost }
   };
-}) satisfies GetServerSideProps<{ currentPost, previousPost, nextPost }>
+});
 
 export default function PostPage({ currentPost, previousPost, nextPost }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (

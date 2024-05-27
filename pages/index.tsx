@@ -2,7 +2,7 @@ import styles from "@/styles/Home.module.css";
 
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 
-import LastPosts, { LastPost } from "./LastPosts";
+import LastPosts, { LastPost } from "../components/LastPosts";
 import { executeQuery } from "@/lib/fetch-contents";
 
 const QUERY = `

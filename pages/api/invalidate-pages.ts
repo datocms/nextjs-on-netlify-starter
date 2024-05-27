@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   
     await invalidateCacheTags(cacheTags);
   
-    return res.json({ cacheTags });
+    res.json({ cacheTags });
 
     return;
   }

@@ -34,5 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (err !== null && typeof err === "object" && "message" in err) {
       res.status(500).send({ error: err.message })
     }
+    else {
+      res.status(500).json({ error: 'failed to invalidate pages' })
+    }
   }
 }

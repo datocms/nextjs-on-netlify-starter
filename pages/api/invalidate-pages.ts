@@ -7,7 +7,11 @@ type Data = {
   cacheTags: string[];
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+type Error = {
+  error: unknown;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data | Error>) {
   try {
     if (req.method === 'POST') {
       if (req.headers['webhook-token'] !== process.env.WEBHOOK_TOKEN) {
@@ -27,6 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       res.status(200).json({ cacheTags: [] });
     }
   } catch (err) {
-    res.status(500).send({ error: err.message })
+    if (err !== null && typeof err === "object" && "message" in err) {
+      res.status(500).send({ error: err.message })
+    }
   }
 }
